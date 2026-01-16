@@ -19,11 +19,16 @@ interface CategoryItemProps {
 
 const CategoryItem = ({ title, children, href }: CategoryItemProps) => {
   return (
-    <Link href={href}>
-      <div className="flex flex-col items-center gap-y-2 cursor-pointer bg-white py-5 text-black hover:bg-gray-100">
-        {children}
+    <Link href={href} className="group">
+      <div className="flex flex-col items-center justify-center gap-y-4 p-8 bg-green-800/40 border border-green-800/60 transition-all duration-300 ease-in-out hover:bg-white hover:border-white hover:scale-[1.02] cursor-pointer h-full">
+        {/* Icon wrapper with transition */}
+        <div className="relative w-12 h-12 text-white group-hover:text-green-500 transition-colors ">
+          {children}
+        </div>
 
-        <h3 className="font-semibold text-xl">{title}</h3>
+        <h3 className="font-medium text-sm uppercase tracking-[0.15em] text-green-200 group-hover:text-green-950 transition-colors text-center">
+          {title}
+        </h3>
       </div>
     </Link>
   );

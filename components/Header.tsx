@@ -15,7 +15,7 @@ import HeaderTop from "./HeaderTop";
 import Image from "next/image";
 import SearchInput from "./SearchInput";
 import Link from "next/link";
-import { FaBell } from "react-icons/fa6";
+import { FaBell, FaUser } from "react-icons/fa6";
 
 import CartElement from "./CartElement";
 import NotificationBell from "./NotificationBell";
@@ -46,24 +46,33 @@ const Header = () => {
       title: string;
       price: number;
       image: string;
-      slug:string
+      slug: string;
       stockAvailabillity: number;
     }[] = [];
 
     return; // temporary disable wishlist fetching while the issue is being resolved
-    
-    wishlist.map((item: any) => productArray.push({id: item?.product?.id, title: item?.product?.title, price: item?.product?.price, image: item?.product?.mainImage, slug: item?.product?.slug, stockAvailabillity: item?.product?.inStock}));
-    
+
+    wishlist.map((item: any) =>
+      productArray.push({
+        id: item?.product?.id,
+        title: item?.product?.title,
+        price: item?.product?.price,
+        image: item?.product?.mainImage,
+        slug: item?.product?.slug,
+        stockAvailabillity: item?.product?.inStock,
+      })
+    );
+
     setWishlist(productArray);
   };
 
   // getting user by email so I can get his user id
   const getUserByEmail = async () => {
     if (session?.user?.email) {
-      
-      apiClient.get(`/api/users/email/${session?.user?.email}`, {
-        cache: "no-store",
-      })
+      apiClient
+        .get(`/api/users/email/${session?.user?.email}`, {
+          cache: "no-store",
+        })
         .then((response) => response.json())
         .then((data) => {
           getWishlistByUserId(data?.id);
@@ -79,23 +88,40 @@ const Header = () => {
     <header className="bg-white">
       <HeaderTop />
       {pathname.startsWith("/admin") === false && (
-        <div className="h-32 bg-white flex items-center justify-between px-16 max-[1320px]:px-16 max-md:px-6 max-lg:flex-col max-lg:gap-y-7 max-lg:justify-center max-lg:h-60 max-w-screen-2xl mx-auto">
-          <Link href="/">
-            <img src="/logo v1 svg.svg" width={300} height={300} alt="singitronic logo" className="relative right-5 max-[1023px]:w-56" />
-          </Link>
-          <SearchInput />
-          <div className="flex gap-x-10 items-center">
-            <NotificationBell />
-            <HeartElement wishQuantity={wishQuantity} />
-            <CartElement />
+        <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100 transition-all duration-300">
+          <div className="flex flex-wrap lg:flex-nowrap items-center justify-between px-6 md:px-12 py-4 gap-y-4 max-w-screen-2xl mx-auto">
+            {/* Logo */}
+            <Link
+              href="/"
+              className="flex-shrink-0 mr-10 scale-90 md:scale-100 transition-transform"
+            >
+              <img
+                src="/logo v1 svg.svg"
+                width={200}
+                height={200}
+                alt="clover logo"
+                className="w-40 md:w-56 h-auto"
+              />
+            </Link>
+
+            {/* Search Input - Full width on mobile, centered on desktop */}
+            <div className="w-full lg:flex-1 lg:max-w-xl order-3 lg:order-2 text-center lg:mx-auto">
+              <SearchInput />
+            </div>
+
+            {/* Icons */}
+            <div className="flex gap-x-6 md:gap-x-8 items-center ml-auto lg:ml-10 order-2 lg:order-3">
+              <NotificationBell />
+              <CartElement />
+            </div>
           </div>
         </div>
       )}
-      {pathname.startsWith("/admin") === true && (
+      {/* {pathname.startsWith("/admin") === true && (
         <div className="flex justify-between h-32 bg-white items-center px-16 max-[1320px]:px-10  max-w-screen-2xl mx-auto max-[400px]:px-5">
           <Link href="/">
             <Image
-              src="/logo v1.png"
+              src="/logo v1 svg.svg"
               width={130}
               height={130}
               alt="singitronic logo"
@@ -106,13 +132,9 @@ const Header = () => {
             <NotificationBell />
             <div className="dropdown dropdown-end">
               <div tabIndex={0} role="button" className="w-10">
-                <Image
-                  src="/randomuser.jpg"
-                  alt="random profile photo"
-                  width={30}
-                  height={30}
-                  className="w-full h-full rounded-full"
-                />
+                <button className="relative p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">
+                  <FaUser style={{ fontSize: "1.5rem" }} />
+                </button>
               </div>
               <ul
                 tabIndex={0}
@@ -131,7 +153,7 @@ const Header = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </header>
   );
 };

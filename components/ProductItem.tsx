@@ -1,8 +1,8 @@
 // *********************
-// Role of the component: Product item component 
+// Role of the component: Product item component
 // Name of the component: ProductItem.tsx
 // Developer: Aleksandar Kuzmanovic
-// Version: 1.0
+// Version: 2.0
 // Component call: <ProductItem product={product} color={color} />
 // Input parameters: { product: Product; color: string; }
 // Output: Product item component that contains product image, title, link to the single product page, price, button...
@@ -13,6 +13,7 @@ import React from "react";
 import Link from "next/link";
 
 import { sanitize } from "@/lib/sanitize";
+import { formatPrice } from "@/lib/utils";
 
 const ProductItem = ({
   product,
@@ -21,9 +22,15 @@ const ProductItem = ({
   product: Product;
   color: string;
 }) => {
+  const isDark = color === "black";
+
   return (
-    <div className="flex flex-col items-center gap-y-2">
-      <Link href={`/product/${product.slug}`}>
+    <div className="group relative flex flex-col h-full overflow-hidden rounded-lg transition-all duration-300 hover:shadow-2xl bg-green-700 p-5">
+      {/* Image Container */}
+      <Link
+        href={`/product/${product.slug}`}
+        className="relative aspect-square overflow-hidden bg-gray-100 flex items-center justify-center p-4"
+      >
         <Image
           src={
             product.mainImage
@@ -33,37 +40,49 @@ const ProductItem = ({
           width="0"
           height="0"
           sizes="100vw"
-          className="w-auto h-[300px]"
+          className="max-w-full max-h-full w-auto h-auto object-contain transition-transform duration-300 group-hover:scale-105"
           alt={sanitize(product?.title) || "Product image"}
         />
-      </Link>
-      <Link
-        href={`/product/${product.slug}`}
-        className={
-          color === "black"
-            ? `text-xl text-black font-normal mt-2 uppercase`
-            : `text-xl text-white font-normal mt-2 uppercase`
-        }
-      >
-        {sanitize(product.title)}
-      </Link>
-      <p
-        className={
-          color === "black"
-            ? "text-lg text-black font-semibold"
-            : "text-lg text-white font-semibold"
-        }
-      >
-        ${product.price}
-      </p>
 
-  
-      <Link
-        href={`/product/${product?.slug}`}
-        className="block flex justify-center items-center w-full uppercase bg-white px-0 py-2 text-base border border-black border-gray-300 font-bold text-blue-600 shadow-sm hover:bg-black hover:bg-gray-100 focus:outline-none focus:ring-2"
-      >
-        <p>View product</p>
+        {/* Overlay on hover */}
+        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
       </Link>
+
+      {/* Content Container */}
+      <div className="flex flex-col flex-grow p-4 space-y-3">
+        {/* Title */}
+        <Link
+          href={`/product/${product.slug}`}
+          className={`text-base font-medium tracking-wide transition-colors duration-200 line-clamp-2 ${
+            isDark
+              ? "text-gray-900 group-hover:text-gray-600"
+              : "text-white group-hover:text-gray-200"
+          }`}
+        >
+          {sanitize(product.title)}
+        </Link>
+
+        {/* Price */}
+        <p
+          className={`text-xl font-bold ${
+            isDark ? "text-gray-900" : "text-white"
+          }`}
+        >
+          ${product.price}
+        </p>
+
+        {/* Button */}
+        <Link
+          href={`/product/${product?.slug}`}
+          className={`mt-auto w-full py-3 px-6 text-sm font-semibold tracking-wider uppercase text-center rounded-md transition-all duration-300 ${
+            isDark
+              ? "bg-gray-900 text-white hover:bg-gray-800 hover:shadow-lg"
+              : "bg-white text-gray-900 hover:bg-gray-100 hover:shadow-lg"
+          }`}
+        >
+          View Details
+        </Link>
+      </div>
     </div>
   );
 };

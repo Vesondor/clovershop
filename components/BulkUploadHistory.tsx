@@ -307,7 +307,7 @@ const BulkUploadHistory = () => {
               <p className="text-xs text-gray-500">Failed</p>
             </div>
             <div className="bg-blue-50 rounded p-3 text-center">
-              <p className="text-2xl font-bold text-blue-600">
+              <p className="text-2xl font-bold text-blue-500">
                 {batch.totalRecords > 0
                   ? Math.round(
                       (batch.successfulRecords / batch.totalRecords) * 100

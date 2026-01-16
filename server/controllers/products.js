@@ -260,7 +260,7 @@ const getAllProductsOld = asyncHandler(async (request, response) => {
 });
 
 const createProduct = asyncHandler(async (request, response) => {
-  const {
+  let {
     merchantId,
     slug,
     title,
@@ -271,6 +271,30 @@ const createProduct = asyncHandler(async (request, response) => {
     categoryId,
     inStock,
   } = request.body;
+
+  // Auto-generate slug if not provided
+  if (!slug && title) {
+    slug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)+/g, "");
+  }
+
+  // Find default merchant if not provided
+  if (!merchantId) {
+    const defaultMerchant = await prisma.merchant.findFirst();
+    if (defaultMerchant) {
+      merchantId = defaultMerchant.id;
+    } else {
+      // If no merchant exists, create one (fallback)
+      const newMerchant = await prisma.merchant.create({
+        data: {
+          name: "Default Merchant",
+        }
+      });
+      merchantId = newMerchant.id;
+    }
+  }
 
   if (!title) {
     throw new AppError("Missing required field: title", 400);
@@ -285,7 +309,7 @@ const createProduct = asyncHandler(async (request, response) => {
     throw new AppError("Missing required field: slug", 400);
   }
 
-  if (!price) {
+  if (price === undefined || price === null) {
     throw new AppError("Missing required field: price", 400);
   }
 
@@ -299,7 +323,7 @@ const createProduct = asyncHandler(async (request, response) => {
       slug,
       title,
       mainImage,
-      price,
+      price: parseFloat(price), // Use Float or Int depending on schema (Schema says Int currently, user wants decimal... need to check schema again)
       rating: 5,
       description,
       manufacturer,

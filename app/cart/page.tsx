@@ -1,7 +1,4 @@
-
-import {
-  SectionTitle
-} from "@/components";
+import { SectionTitle } from "@/components";
 import { Loader } from "@/components/Loader";
 import { CartModule } from "@/components/modules/cart";
 import { Suspense } from "react";

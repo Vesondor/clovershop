@@ -1,127 +1,149 @@
 "use client";
-import { DashboardSidebar } from "@/components";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useState, use } from "react";
-import toast from "react-hot-toast";
-import { formatCategoryName } from "../../../../../utils/categoryFormating";
-import { convertCategoryNameToURLFriendly } from "../../../../../utils/categoryFormating";
+import { DashboardSidebar } from "@/components";
+import { FaSave, FaTrash, FaArrowLeft } from "react-icons/fa";
 import apiClient from "@/lib/api";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { convertCategoryNameToURLFriendly } from "../../../../../utils/categoryFormating";
 
-interface DashboardSingleCategoryProps {
-  params: Promise<{ id: string }>;
+interface Category {
+    id: string;
+    name: string;
 }
 
-const DashboardSingleCategory = ({ params }: DashboardSingleCategoryProps) => {
+interface EditCategoryPageProps {
+    params: Promise<{ id: string }>;
+}
+
+const EditCategoryPage = ({ params }: EditCategoryPageProps) => {
   const resolvedParams = use(params);
   const id = resolvedParams.id;
-
-  const [categoryInput, setCategoryInput] = useState<{ name: string }>({
-    name: "",
-  });
   const router = useRouter();
+  const [name, setName] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
-  const deleteCategory = async () => {
-    const requestOptions = {
-      method: "DELETE",
+  useEffect(() => {
+    const fetchCategory = async () => {
+        setIsLoading(true);
+        try {
+            const response = await apiClient.get(\`/api/categories/\${id}\`);
+            if (response.ok) {
+                const data = await response.json();
+                setName(data.name);
+            } else {
+                toast.error("Category not found");
+                router.push("/admin/categories");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to load category");
+        } finally {
+            setIsLoading(false);
+        }
     };
-    // sending API request for deleting a category
-    apiClient
-      .delete(`/api/categories/${id}`, requestOptions)
-      .then((response) => {
-        if (response.status === 204) {
-          toast.success("Category deleted successfully");
-          router.push("/admin/categories");
-        } else {
-          throw Error("There was an error deleting a category");
-        }
-      })
-      .catch((error) => {
-        toast.error("There was an error deleting category");
-      });
-  };
+    fetchCategory();
+  }, [id, router]);
 
-  const updateCategory = async () => {
-    if (categoryInput.name.length > 0) {
-      try {
-        const response = await apiClient.put(`/api/categories/${id}`, {
-          name: convertCategoryNameToURLFriendly(categoryInput.name),
+  const handleUpdate = async () => {
+    if (!name.trim()) {
+        toast.error("Category name is required");
+        return;
+    }
+
+    try {
+        const response = await apiClient.put(\`/api/categories/\${id}\`, { 
+            name: convertCategoryNameToURLFriendly(name) 
         });
-
-        if (response.status === 200) {
-          await response.json();
-          toast.success("Category successfully updated");
+        
+        if (response.ok) {
+            toast.success("Category updated successfully!");
+            router.push("/admin/categories");
         } else {
-          const errorData = await response.json();
-          toast.error(errorData.error || "Error updating a category");
+            toast.error("Failed to update category");
         }
-      } catch (error) {
-        console.error("Error updating category:", error);
-        toast.error("There was an error while updating a category");
-      }
-    } else {
-      toast.error("For updating a category you must enter all values");
-      return;
+    } catch (error) {
+        toast.error("An error occurred");
     }
   };
 
-  useEffect(() => {
-    // sending API request for getting single categroy
-    apiClient
-      .get(`/api/categories/${id}`)
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        setCategoryInput({
-          name: data?.name,
-        });
-      });
-  }, [id]);
+  const handleDelete = async () => {
+      if (!confirm("Are you sure you want to delete this category? Products in this category might be affected.")) return;
+
+      try {
+        const response = await apiClient.delete(\`/api/categories/\${id}\`);
+        if (response.status === 204) {
+            toast.success("Category deleted");
+            router.push("/admin/categories");
+        } else {
+            toast.error("Failed to delete category");
+        }
+      } catch (error) {
+          toast.error("Error deleting category");
+      }
+  };
+
+  if (isLoading) {
+    return (
+        <div className="w-full h-screen flex items-center justify-center bg-gray-50">
+            <span className="loading loading-spinner loading-lg text-green-800"></span>
+        </div>
+    );
+  }
 
   return (
-    <div className="bg-white flex justify-start max-w-screen-2xl mx-auto xl:h-full max-xl:flex-col max-xl:gap-y-5">
+    <div className="bg-gray-50 flex justify-start min-h-screen">
       <DashboardSidebar />
-      <div className="flex flex-col gap-y-7 xl:pl-5 max-xl:px-5 w-full">
-        <h1 className="text-3xl font-semibold">Category details</h1>
-        <div>
-          <label className="form-control w-full max-w-xs">
-            <div className="label">
-              <span className="label-text">Category name:</span>
+      
+      <div className="flex-1 p-8">
+        <div className="max-w-xl mx-auto">
+             <div className="flex justify-between items-center mb-8">
+                <div className="flex items-center gap-4">
+                    <button onClick={() => router.back()} className="btn btn-circle btn-ghost">
+                        <FaArrowLeft />
+                    </button>
+                    <h1 className="text-3xl font-bold text-gray-800">Edit Category</h1>
+                </div>
+                <button 
+                    onClick={handleDelete}
+                    className="btn btn-ghost text-red-500 hover:bg-red-50"
+                >
+                    <FaTrash /> Delete
+                </button>
             </div>
-            <input
-              type="text"
-              className="input input-bordered w-full max-w-xs"
-              value={formatCategoryName(categoryInput.name)}
-              onChange={(e) =>
-                setCategoryInput({ ...categoryInput, name: e.target.value })
-              }
-            />
-          </label>
-        </div>
 
-        <div className="flex gap-x-2 max-sm:flex-col">
-          <button
-            type="button"
-            className="uppercase bg-blue-500 px-10 py-5 text-lg border border-black border-gray-300 font-bold text-white shadow-sm hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2"
-            onClick={updateCategory}
-          >
-            Update category
-          </button>
-          <button
-            type="button"
-            className="uppercase bg-red-600 px-10 py-5 text-lg border border-black border-gray-300 font-bold text-white shadow-sm hover:bg-red-700 hover:text-white focus:outline-none focus:ring-2"
-            onClick={deleteCategory}
-          >
-            Delete category
-          </button>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <div className="form-control w-full mb-6">
+                    <label className="label">
+                        <span className="label-text font-medium text-gray-700">Category Name <span className="text-red-500">*</span></span>
+                    </label>
+                    <input 
+                        type="text" 
+                        className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-green-800 focus:border-transparent" 
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                </div>
+
+                <div className="flex justify-end gap-2">
+                    <button 
+                         onClick={() => router.back()}
+                        className="btn btn-ghost"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        onClick={handleUpdate} 
+                        className="btn bg-green-800 hover:bg-green-700 text-white border-none gap-2"
+                    >
+                        <FaSave /> Save Changes
+                    </button>
+                </div>
+            </div>
         </div>
-        <p className="text-xl text-error max-sm:text-lg">
-          Note: if you delete this category, you will delete all products
-          associated with the category.
-        </p>
       </div>
     </div>
   );
 };
 
-export default DashboardSingleCategory;
+export default EditCategoryPage;

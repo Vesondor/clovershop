@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -18,7 +18,7 @@ model Product {
   slug           String                   @unique
   title          String
   mainImage      String
-  price          Int                      @default(0)
+  price          Float                    @default(0)
   rating         Int                      @default(0)
   description    String
   manufacturer   String
@@ -66,7 +66,7 @@ model Customer_order {
   city        String
   country     String
   orderNotice String?
-  total       Int
+  total       Float
   products    customer_order_product[]
 }
 
@@ -166,7 +166,7 @@ model bulk_upload_item {
   // snapshot fields for auditing and re-commit edits
   title         String
   slug          String
-  price         Int
+  price         Float
   manufacturer  String?
   description   String?
   mainImage     String?

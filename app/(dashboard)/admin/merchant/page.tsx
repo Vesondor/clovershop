@@ -49,7 +49,7 @@ export default function MerchantPage() {
           <h1 className="text-3xl font-bold">Merchants</h1>
           <Link
             href="/admin/merchant/new"
-            className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition"
+            className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-500 transition"
           >
             Add Merchant
           </Link>
