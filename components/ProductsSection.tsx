@@ -11,27 +11,16 @@
 import React from "react";
 import ProductItem from "./ProductItem";
 import Heading from "./Heading";
-import apiClient from "@/lib/api";
+import prisma from "@/utils/db";
 
 const ProductsSection = async () => {
-  let products = [];
-
-  try {
-    // sending API request for getting all products
-    const data = await apiClient.get("/api/products");
-
-    if (!data.ok) {
-      console.error("Failed to fetch products:", data.statusText);
-      products = [];
-    } else {
-      const result = await data.json();
-      // Ensure products is an array
-      products = Array.isArray(result) ? result : [];
-    }
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    products = [];
-  }
+  /*
+   * Replace API call with direct DB call for Server Component to avoid build-time fetch errors
+   * (ECONNREFUSED) when API server isn't running.
+   */
+  const products: any[] = await prisma.product.findMany({
+    take: 10, // Limit to featured products, or remove for all
+  });
 
   return (
     <div className="bg-green-800 border-white">
