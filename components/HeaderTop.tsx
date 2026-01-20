@@ -1,76 +1,27 @@
-// *********************
-// Role of the component: Topbar of the header
-// Name of the component: HeaderTop.tsx
-// Developer: Aleksandar Kuzmanovic
-// Version: 1.0
-// Component call: <HeaderTop />
-// Input parameters: no input parameters
-// Output: topbar with phone, email and login and register links
-// *********************
-
-"use client";
-import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
-import toast from "react-hot-toast";
-import { FaHome } from "react-icons/fa";
-import { FaHeadphones, FaTable } from "react-icons/fa6";
-import { FaRegEnvelope } from "react-icons/fa6";
-import { FaLocationDot } from "react-icons/fa6";
-import { FaRegUser } from "react-icons/fa6";
+import { FaHeadphones, FaRegEnvelope } from "react-icons/fa6";
 
 const HeaderTop = () => {
-  const { data: session }: any = useSession();
-
-  const handleLogout = () => {
-    setTimeout(() => signOut(), 1000);
-    toast.success("Logout successful!");
-  };
   return (
-    <div className="h-10 text-white  bg-green-800 max-lg:px-5 max-lg:h-16 max-[573px]:px-0">
-      <div className="flex justify-between h-full max-lg:flex-col max-lg:justify-center max-lg:items-center max-w-screen-2xl mx-auto px-12 max-[573px]:px-0">
-        <ul className="flex items-center h-full gap-x-5 max-[370px]:text-sm max-[370px]:gap-x-2">
-          <li className="flex items-center gap-x-2 font-semibold">
-            <FaRegEnvelope className="text-white text-xl" />
-            <span>cloverbrand@gmail.com</span>
+    <div className="h-10 text-white bg-green-700 max-lg:px-5 max-lg:h-auto max-lg:py-2">
+      <div className="flex justify-between items-center h-full max-w-screen-2xl mx-auto px-12 max-lg:px-0 max-lg:flex-col max-lg:gap-y-2">
+        <ul className="flex items-center gap-x-5 max-[340px]:flex-col max-[340px]:gap-y-1">
+          <li className="flex items-center gap-x-2 text-sm font-semibold">
+            <FaHeadphones className="text-yellow-300" />
+            <span>+855 876 269 463</span>
+          </li>
+          <li className="flex items-center gap-x-2 text-sm font-semibold">
+            <FaRegEnvelope className="text-yellow-300" />
+            <span>cloverfootwear@gmail.com</span>
           </li>
         </ul>
-        <ul className="flex items-center gap-x-5 h-full max-[370px]:text-sm max-[370px]:gap-x-2 font-semibold">
-          {!session ? (
-            <>
-              <li className="flex items-center">
-                <Link
-                  href="/login"
-                  className="flex items-center gap-x-2 font-semibold"
-                >
-                  <FaRegUser className="text-white" />
-                  <span>Login</span>
-                </Link>
-              </li>
-            </>
-          ) : (
-            <>
-              <Link href="/" className="ml-10 text-base">
-                <span>
-                  <FaHome style={{ fontSize: "1.5rem" }} />
-                </span>
-              </Link>
-              <Link href="/admin" className="ml-10 text-base">
-                <span>Admin</span>
-              </Link>
-
-              <li className="flex items-center">
-                <button
-                  onClick={() => handleLogout()}
-                  className="flex items-center gap-x-2 font-semibold"
-                >
-                  <FaRegUser className="text-white" />
-                  <span>Log out</span>
-                </button>
-              </li>
-            </>
-          )}
-        </ul>
+        <div className="flex items-center gap-x-5">
+          {/* Auth links removed, just social or generic links could go here if needed. 
+               For now leaving empty or could add generic welcome message if desired, 
+               but user requested cleaning up errors first. */}
+          <span className="text-sm font-semibold">Welcome to Clover Shop</span>
+        </div>
       </div>
     </div>
   );

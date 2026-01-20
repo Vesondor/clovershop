@@ -2,87 +2,29 @@
 // Role of the component: Header component
 // Name of the component: Header.tsx
 // Developer: Aleksandar Kuzmanovic
-// Version: 1.0
+// Version: 1.1 (No Auth)
 // Component call: <Header />
 // Input parameters: no input parameters
 // Output: Header component
 // *********************
 
 "use client";
+import React, { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import React, { useEffect, useState } from "react";
 import HeaderTop from "./HeaderTop";
-import Image from "next/image";
 import SearchInput from "./SearchInput";
 import Link from "next/link";
-import { FaBell, FaUser } from "react-icons/fa6";
-
+import { FaUser } from "react-icons/fa6";
 import CartElement from "./CartElement";
 import NotificationBell from "./NotificationBell";
-import HeartElement from "./HeartElement";
-import { signOut, useSession } from "next-auth/react";
-import toast from "react-hot-toast";
 import { useWishlistStore } from "@/app/_zustand/wishlistStore";
-import apiClient from "@/lib/api";
 
 const Header = () => {
-  const { data: session, status } = useSession();
   const pathname = usePathname();
-  const { wishlist, setWishlist, wishQuantity } = useWishlistStore();
+  const { wishlist } = useWishlistStore();
 
-  const handleLogout = () => {
-    setTimeout(() => signOut(), 1000);
-    toast.success("Logout successful!");
-  };
-
-  // getting all wishlist items by user id
-  const getWishlistByUserId = async (id: string) => {
-    const response = await apiClient.get(`/api/wishlist/${id}`, {
-      cache: "no-store",
-    });
-    const wishlist = await response.json();
-    const productArray: {
-      id: string;
-      title: string;
-      price: number;
-      image: string;
-      slug: string;
-      stockAvailabillity: number;
-    }[] = [];
-
-    return; // temporary disable wishlist fetching while the issue is being resolved
-
-    wishlist.map((item: any) =>
-      productArray.push({
-        id: item?.product?.id,
-        title: item?.product?.title,
-        price: item?.product?.price,
-        image: item?.product?.mainImage,
-        slug: item?.product?.slug,
-        stockAvailabillity: item?.product?.inStock,
-      })
-    );
-
-    setWishlist(productArray);
-  };
-
-  // getting user by email so I can get his user id
-  const getUserByEmail = async () => {
-    if (session?.user?.email) {
-      apiClient
-        .get(`/api/users/email/${session?.user?.email}`, {
-          cache: "no-store",
-        })
-        .then((response) => response.json())
-        .then((data) => {
-          getWishlistByUserId(data?.id);
-        });
-    }
-  };
-
-  useEffect(() => {
-    getUserByEmail();
-  }, [session?.user?.email, wishlist.length]);
+  // Without auth, we can't fetch wishlist by user ID easily unless we use local storage or similar.
+  // For now, removing the effective logic that depended on session.
 
   return (
     <header className="bg-white">
@@ -104,7 +46,7 @@ const Header = () => {
               />
             </Link>
 
-            {/* Search Input - Full width on mobile, centered on desktop */}
+            {/* Search Input */}
             <div className="w-full lg:flex-1 lg:max-w-xl order-3 lg:order-2 text-center lg:mx-auto">
               <SearchInput />
             </div>
@@ -113,47 +55,39 @@ const Header = () => {
             <div className="flex gap-x-6 md:gap-x-8 items-center ml-auto lg:ml-10 order-2 lg:order-3">
               <NotificationBell />
               <CartElement />
+
+              {/* User / Admin Menu - Always Visible */}
+              <div className="dropdown dropdown-end">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="btn btn-ghost btn-circle avatar"
+                >
+                  <div className="w-10 rounded-full bg-green-100 flex items-center justify-center text-green-800">
+                    <FaUser className="text-xl" />
+                  </div>
+                </div>
+                <ul
+                  tabIndex={0}
+                  className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52"
+                >
+                  <li>
+                    <Link href="/admin" className="justify-between">
+                      Dashboard
+                      <span className="badge badge-success text-white text-xs">
+                        Admin
+                      </span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/profile">Profile</Link>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
       )}
-      {/* {pathname.startsWith("/admin") === true && (
-        <div className="flex justify-between h-32 bg-white items-center px-16 max-[1320px]:px-10  max-w-screen-2xl mx-auto max-[400px]:px-5">
-          <Link href="/">
-            <Image
-              src="/logo v1 svg.svg"
-              width={130}
-              height={130}
-              alt="singitronic logo"
-              className="w-56 h-auto"
-            />
-          </Link>
-          <div className="flex gap-x-5 items-center">
-            <NotificationBell />
-            <div className="dropdown dropdown-end">
-              <div tabIndex={0} role="button" className="w-10">
-                <button className="relative p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">
-                  <FaUser style={{ fontSize: "1.5rem" }} />
-                </button>
-              </div>
-              <ul
-                tabIndex={0}
-                className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
-              >
-                <li>
-                  <Link href="/admin">Dashboard</Link>
-                </li>
-                <li>
-                  <a>Profile</a>
-                </li>
-                <li onClick={handleLogout}>
-                  <a href="#">Logout</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      )} */}
     </header>
   );
 };

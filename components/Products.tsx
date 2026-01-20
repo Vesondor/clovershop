@@ -56,8 +56,8 @@ const Products = async ({
       }&filters[rating][$gte]=${
         Number(searchParams?.rating) || 0
       }&filters[inStock][$${stockMode}]=1&${
-        params?.slug?.length! > 0
-          ? `filters[category][$equals]=${params?.slug}&`
+        params?.slug && params.slug.length > 0
+          ? `filters[category][$equals]=${params.slug}&`
           : ""
       }sort=${searchParams?.sort}&page=${page}`
     );
@@ -90,7 +90,9 @@ const Products = async ({
               <Image
                 src={
                   product.mainImage
-                    ? `/${product.mainImage}`
+                    ? product.mainImage.startsWith("http")
+                      ? product.mainImage
+                      : `/${product.mainImage}`
                     : "/product_placeholder.jpg"
                 }
                 width="0"

@@ -1,53 +1,18 @@
-"use client"
+"use client";
 import { useWishlistStore } from "@/app/_zustand/wishlistStore";
 import WishItem from "@/components/WishItem";
-import apiClient from "@/lib/api";
 import { nanoid } from "nanoid";
-import { useSession } from "next-auth/react";
-import { useEffect } from "react";
+import React from "react";
 
 export const WishlistModule = () => {
-  const { data: session, status } = useSession();
-  const { wishlist, setWishlist } = useWishlistStore();
+  const { wishlist } = useWishlistStore();
 
-  const getWishlistByUserId = async (id: string) => {
-    const response = await apiClient.get(`/api/wishlist/${id}`, {
-      cache: "no-store",
-    });
-    const wishlist = await response.json();
+  // Auth removed - Wishlist fetching logic depended on user session.
+  // Ideally this should use local storage or a guest ID in the future.
+  // For now, it will use the Zustand store state (which might be empty on refresh).
 
-    const productArray: {
-      id: string;
-      title: string;
-      price: number;
-      image: string;
-      slug: string
-      stockAvailabillity: number;
-    }[] = [];
-
-    wishlist.map((item: any) => productArray.push({ id: item?.product?.id, title: item?.product?.title, price: item?.product?.price, image: item?.product?.mainImage, slug: item?.product?.slug, stockAvailabillity: item?.product?.inStock }));
-
-    setWishlist(productArray);
-  };
-
-  const getUserByEmail = async () => {
-    if (session?.user?.email) {
-      apiClient.get(`/api/users/email/${session?.user?.email}`, {
-        cache: "no-store",
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          getWishlistByUserId(data?.id);
-        });
-    }
-  };
-
-  useEffect(() => {
-    getUserByEmail();
-  }, [session?.user?.email, wishlist.length]);
   return (
     <>
-
       {wishlist && wishlist.length === 0 ? (
         <h3 className="text-center text-4xl py-10 text-black max-lg:text-3xl max-sm:text-2xl max-sm:pt-5 max-[400px]:text-xl">
           No items found in the wishlist
@@ -84,5 +49,5 @@ export const WishlistModule = () => {
         </div>
       )}
     </>
-  )
-}
+  );
+};

@@ -55,3 +55,4 @@ logs/
 # OS
 Thumbs.db
 .DS_Storeenv_db
+node_modules

@@ -41,13 +41,11 @@ const DashboardCreateNewUser = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(sanitizedUserInput),
         };
-        ap(`/api/users`, requestOptions)
+        fetch(`/api/users`, requestOptions)
           .then((response) => {
-            if(response.status === 201){
+            if (response.status === 201) {
               return response.json();
-
-            }else{
-              
+            } else {
               throw Error("Error while creating user");
             }
           })
@@ -58,7 +56,8 @@ const DashboardCreateNewUser = () => {
               password: "",
               role: "user",
             });
-          }).catch(error => {
+          })
+          .catch((error) => {
             toast.error("Error while creating user");
           });
       } else {

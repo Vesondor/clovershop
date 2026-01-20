@@ -1,12 +1,11 @@
-import { requireAdmin } from "@/utils/adminAuth";
+import React from "react";
 
-export default async function Layout({
+export default function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // This function handles all authentication and authorization server-side
-  await requireAdmin();
+  // Authentication removed as per request
 
   return <>{children}</>;
 }

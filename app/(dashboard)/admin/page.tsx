@@ -12,7 +12,7 @@ const AdminDashboardPage = () => {
         <header className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800">Overview</h1>
           <p className="text-gray-500 mt-1">
-            Welcome back, Admin. Here is what's happening today.
+            Welcome back, Admin. Here is what&apos;s happening today.
           </p>
         </header>
 
@@ -110,7 +110,7 @@ const AdminDashboardPage = () => {
                 <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                 <p className="text-gray-600">
                   <span className="font-semibold text-gray-800">Sokchea</span>{" "}
-                  updated product "Wireless Headphones"
+                  updated product &quot;Wireless Headphones&quot;
                 </p>
                 <span className="text-sm text-gray-400 ml-auto">
                   1 hour ago
@@ -122,7 +122,7 @@ const AdminDashboardPage = () => {
                   <span className="font-semibold text-gray-800">
                     Low stock alert
                   </span>{" "}
-                  for "Smart Watch Series 7"
+                  for &quot;Smart Watch Series 7&quot;
                 </p>
                 <span className="text-sm text-gray-400 ml-auto">
                   3 hours ago
