@@ -17,10 +17,9 @@ const HeaderTop = () => {
           </li>
         </ul>
         <div className="flex items-center gap-x-5">
-          {/* Auth links removed, just social or generic links could go here if needed. 
-               For now leaving empty or could add generic welcome message if desired, 
-               but user requested cleaning up errors first. */}
-          <span className="text-sm font-semibold">Welcome to Clover Shop</span>
+          <Link href="/">
+            <span className="text-sm font-semibold">CLOVER SHOP</span>
+          </Link>
         </div>
       </div>
     </div>
