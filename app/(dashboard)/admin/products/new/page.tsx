@@ -99,7 +99,7 @@ const AddNewProduct = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setProduct({ ...product, mainImage: data.fileName });
+        setProduct({ ...product, mainImage: data.url });
         toast.success("Image uploaded successfully");
       } else {
         console.error("File upload unsuccessfull");

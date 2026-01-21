@@ -124,7 +124,7 @@ const EditProduct = ({ params }: DashboardProductDetailsProps) => {
       if (response.ok) {
         const data = await response.json();
         if (product) {
-          setProduct({ ...product, mainImage: data.file });
+          setProduct({ ...product, mainImage: data.url });
         }
         toast.success("Image uploaded!");
       } else {
