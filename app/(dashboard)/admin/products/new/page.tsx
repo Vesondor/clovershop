@@ -216,7 +216,11 @@ const AddNewProduct = () => {
                   {product?.mainImage ? (
                     <div className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200">
                       <Image
-                        src={`/${product.mainImage}`}
+                        src={
+                          product.mainImage.startsWith("http")
+                            ? product.mainImage
+                            : `/${product.mainImage}`
+                        }
                         alt="Product preview"
                         fill
                         className="object-cover"

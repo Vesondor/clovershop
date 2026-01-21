@@ -94,7 +94,9 @@ const DashboardProductTable = () => {
                             <Image
                               src={
                                 product?.mainImage
-                                  ? `/${product.mainImage}`
+                                  ? product.mainImage.startsWith("http")
+                                    ? product.mainImage
+                                    : `/${product.mainImage}`
                                   : "/product_placeholder.jpg"
                               }
                               alt={sanitize(product?.title) || "Product"}

@@ -234,7 +234,11 @@ const EditProduct = ({ params }: DashboardProductDetailsProps) => {
                   {product.mainImage && (
                     <div className="mt-4 relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden">
                       <Image
-                        src={`/${product.mainImage}`}
+                        src={
+                          product.mainImage.startsWith("http")
+                            ? product.mainImage
+                            : `/${product.mainImage}`
+                        }
                         alt="Preview"
                         fill
                         className="object-contain"
