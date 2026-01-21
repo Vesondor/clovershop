@@ -4,7 +4,7 @@ import {
   ProductTabs,
   SingleProductDynamicFields,
 } from "@/components";
-import apiClient from "@/lib/api";
+import prisma from "@/utils/db";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import React from "react";
@@ -26,14 +26,27 @@ interface SingleProductPageProps {
 
 const SingleProductPage = async ({ params }: SingleProductPageProps) => {
   const paramsAwaited = await params;
-  // sending API request for a single product with a given product slug
-  const data = await apiClient.get(`/api/slugs/${paramsAwaited?.productSlug}`);
-  const product = await data.json();
-  const images = product?.images || [];
 
-  if (!product || product.error) {
+  // Direct DB call to avoid self-referential fetch in Server Components
+  const product = await prisma.product.findUnique({
+    where: { slug: paramsAwaited?.productSlug },
+    include: {
+      category: true,
+      merchant: true,
+    },
+  });
+
+  const images = await prisma.image.findMany({
+    where: { productID: product?.id },
+  });
+
+  if (!product) {
     notFound();
   }
+
+  // Combine product and images to match structure expected by UI
+  const productWithImages = { ...product, images };
+  const displayProduct = productWithImages;
 
   return (
     <div className="bg-white">
@@ -42,10 +55,10 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
           <div>
             <Image
               src={
-                product?.mainImage
-                  ? product?.mainImage.startsWith("http")
-                    ? product?.mainImage
-                    : `/${product?.mainImage}`
+                displayProduct?.mainImage
+                  ? displayProduct?.mainImage.startsWith("http")
+                    ? displayProduct?.mainImage
+                    : `/${displayProduct?.mainImage}`
                   : "/product_placeholder.jpg"
               }
               width={500}
@@ -71,12 +84,12 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
             </div>
           </div>
           <div className="flex flex-col gap-y-7 text-black max-[500px]:text-center">
-            <h1 className="text-3xl">{sanitize(product?.title)}</h1>
+            <h1 className="text-3xl">{sanitize(displayProduct?.title)}</h1>
             <p className="text-xl font-semibold">
-              {formatPrice(product?.price)}
+              {formatPrice(displayProduct?.price)}
             </p>
-            <StockAvailabillity stock={94} inStock={product?.inStock} />
-            <SingleProductDynamicFields product={product} />
+            <StockAvailabillity stock={94} inStock={displayProduct?.inStock} />
+            <SingleProductDynamicFields product={displayProduct} />
             <div className="flex flex-col gap-y-2 max-[500px]:items-center">
               <p className="text-lg">
                 SKU: <span className="ml-1">abccd-18</span>
@@ -137,7 +150,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
           </div>
         </div>
         <div className="py-16">
-          <ProductTabs product={product} />
+          <ProductTabs product={displayProduct} />
         </div>
       </div>
     </div>
