@@ -95,7 +95,7 @@ const AddNewProduct = () => {
     formData.append("uploadedFile", file);
 
     try {
-      const response = await apiClient.post("/api/main-image", formData);
+      const response = await apiClient.post("/api/upload", formData);
 
       if (response.ok) {
         const data = await response.json();
