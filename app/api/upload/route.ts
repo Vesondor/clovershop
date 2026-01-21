@@ -12,12 +12,27 @@ function handleError(error: any) {
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
+
+    // DEBUG LOGGING
+    console.log("Upload API: Received request");
+    console.log("Upload API: FormData Keys:", Array.from(formData.keys()));
+
     // Support both 'image' and 'uploadedFile' keys (legacy support)
     const file = (formData.get("image") ||
       formData.get("uploadedFile")) as File | null;
 
+    console.log(
+      "Upload API: File found:",
+      !!file,
+      file ? `Size: ${file.size}, Type: ${file.type}` : "No file",
+    );
+
     if (!file) {
-      throw new AppError("No file uploaded", 400);
+      throw new AppError(
+        "No file uploaded. Available keys: " +
+          Array.from(formData.keys()).join(", "),
+        400,
+      );
     }
 
     const imageUrl = await uploadToImgBB(file);
