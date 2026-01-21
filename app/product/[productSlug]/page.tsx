@@ -29,10 +29,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
   // sending API request for a single product with a given product slug
   const data = await apiClient.get(`/api/slugs/${paramsAwaited?.productSlug}`);
   const product = await data.json();
-
-  // sending API request for more than 1 product image if it exists
-  const imagesData = await apiClient.get(`/api/images/${paramsAwaited?.id}`);
-  const images = await imagesData.json();
+  const images = product?.images || [];
 
   if (!product || product.error) {
     notFound();

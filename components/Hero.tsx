@@ -20,12 +20,9 @@ const Hero = () => {
       <div className="relative z-10 grid grid-cols-2 items-center justify-items-center px-6 md:px-10 gap-x-10 max-w-screen-2xl mx-auto h-full py-20 max-lg:grid-cols-1 max-lg:gap-y-16">
         <div className="flex flex-col gap-y-8 max-lg:order-last max-lg:items-center max-lg:text-center">
           <div className="space-y-4">
-            <span className="text-green-200 tracking-[0.3em] font-medium text-sm md:text-base uppercase">
-              Current Collection
-            </span>
             <h1 className="text-7xl text-white font-light tracking-tight leading-tight max-xl:text-6xl max-md:text-5xl max-sm:text-4xl">
               CLOVER <br />
-              <span className="font-bold italic">COLLECTION</span>
+              <span className="font-bold">COLLECTION</span>
             </h1>
           </div>
 
@@ -53,7 +50,7 @@ const Hero = () => {
             width={600}
             height={600}
             alt="smart watch"
-            className="max-md:w-[400px] max-md:h-[400px] max-sm:h-[300px] max-sm:w-[300px] w-auto h-auto drop-shadow-2xl relative z-10"
+            className="max-md:w-[400px] max-md:h-[400px] max-sm:h-[400px] max-sm:w-[300px] w-auto h-auto drop-shadow-2xl relative z-10"
           />
         </div>
       </div>

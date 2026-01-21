@@ -52,9 +52,18 @@ export const categoryMenuList = [
     ),
     href: "/shop/accessories",
   },
+  {
+    id: 7,
+    title: "Shoe Cares",
+    icon: (
+      <FaClover className="w-full h-full text-white group-hover:text-green-500 transition-colors duration-300" />
+    ),
+    href: "/shop/shoe-care-products",
+  },
 ];
 
 import { FaShippingFast, FaHeadset, FaShoppingCart } from "react-icons/fa";
+import { FaClover, FaShoelace } from "react-icons/fa6";
 
 export const incentives = [
   {

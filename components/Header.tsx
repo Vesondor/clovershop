@@ -53,8 +53,8 @@ const Header = () => {
 
             {/* Icons */}
             <div className="flex gap-x-6 md:gap-x-8 items-center ml-auto lg:ml-10 order-2 lg:order-3">
-              <NotificationBell />
-              <CartElement />
+              {/* <NotificationBell /> */}
+              {/* <CartElement /> */}
 
               {/* User / Admin Menu - Always Visible */}
               <div className="dropdown dropdown-end">
@@ -63,9 +63,7 @@ const Header = () => {
                   role="button"
                   className="btn btn-ghost btn-circle avatar"
                 >
-                  <div className="w-10 rounded-full bg-green-100 flex items-center justify-center text-green-800">
-                    <FaUser className="text-xl" />
-                  </div>
+                  <div className="w-10 rounded-full bg-green-100 text-green-800"></div>
                 </div>
                 <ul
                   tabIndex={0}
